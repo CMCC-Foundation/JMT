@@ -20,8 +20,8 @@
 
 MEM_LOWER_LIMIT=${1:-"70"}
 MEM_UPPER_LIMIT=${2:-"150"}
-LOWER_DATE=${3-"2022-12-19"}
-UPPER_DATE=${4-"2023-03-27"}
+LOWER_DATE=${3-$(date '+%Y-%m-%d' -d'-30 days')}
+UPPER_DATE=${4-$(date '+%Y-%m-%d')}
 ACCT_SERVER=${5:-"127.0.0.1"}
 ACCT_USER=${6:-"root"}
 ACCT_PASSWORD="root"
