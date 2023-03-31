@@ -337,7 +337,7 @@ int main(int argc, char *argv[])
     // num_jobs
     long long p_num_jobs = 0;
     out_params[P_NJOBS].buffer_type = MYSQL_TYPE_LONGLONG;
-    out_params[P_NJOBS].buffer = (float *) &p_num_jobs;
+    out_params[P_NJOBS].buffer = (long long *) &p_num_jobs;
     out_params[P_NJOBS].length = &ul_zero_value;
     out_params[P_NJOBS].is_null = 0;
 
@@ -452,7 +452,11 @@ int main(int argc, char *argv[])
 	padLens[0] = MAX_USERNAME_LEN - p_username_length -1;
         p_jobname[p_jobname_length] = '\0';
 	// -- p_jobname_length;
-	padLens[1] = 20 - p_jobname_length -1; 
+	padLens[1] = _MAX_JOBNAME_LEN - p_jobname_length -1;
+
+	if(padLens[1] <= 0)
+                padLens[1] = 0;
+ 
         p_queue[p_queue_length] = '\0';
 	// -- p_queue_length;
 	padLens[2] = MAX_QUEUE_LEN - p_queue_length -1;
@@ -461,7 +465,11 @@ int main(int argc, char *argv[])
 	padLens[3] = MAX_APP_LEN - p_app_length -1;
         p_sla[p_sla_length] = '\0';
 	// -- p_sla_length;
-	padLens[4] = 20 - p_sla_length -1;
+	padLens[4] = _MAX_SLA_LEN - p_sla_length -1;
+
+	if(padLens[4] <= 0)
+                padLens[4] = 0;
+
 	p_project[p_project_length] = '\0';
 	//  -- p_project_length;
 	padLens[5] = MAX_PROJECT_LEN - p_project_length -1;
@@ -486,7 +494,7 @@ int main(int argc, char *argv[])
 
 	// printf("username length: %d, jobname_length: %d, queue_length: %d, app_length: %d, sla_length: %d, project_length: %d\n", p_username_length, p_jobname_length, p_queue_length, p_app_length, p_sla_length, p_project_length);
 
-        printf("| %s%*.*s| %s%*.*s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s| %s%*.*s| %s%*.*s| %s%*.*s| %s%*.*s|\n", p_username, padLens[0], padLens[0], padding, p_jobname, padLens[1], padLens[1], padding, numbersPadLens[0], numbersPadLens[0], padding, p_numbers[0], numbersPadLens[1], numbersPadLens[1], padding, p_numbers[1], numbersPadLens[2], numbersPadLens[2], padding,  p_numbers[2], numbersPadLens[3], numbersPadLens[3], padding, p_numbers[3], numbersPadLens[4], numbersPadLens[4], padding, p_numbers[4], numbersPadLens[5], numbersPadLens[5], padding,  p_numbers[5], numbersPadLens[6], numbersPadLens[6], padding, p_numbers[6], p_queue, padLens[2], padLens[2], padding, p_app, padLens[3], padLens[3], padding, p_sla, padLens[4], padLens[4], padding, p_project, padLens[5], padLens[5], padding);
+        printf("| %s%*.*s| %.19s%*.*s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s| %s%*.*s| %s%*.*s| %.19s%*.*s| %s%*.*s|\n", p_username, padLens[0], padLens[0], padding, p_jobname, padLens[1], padLens[1], padding, numbersPadLens[0], numbersPadLens[0], padding, p_numbers[0], numbersPadLens[1], numbersPadLens[1], padding, p_numbers[1], numbersPadLens[2], numbersPadLens[2], padding,  p_numbers[2], numbersPadLens[3], numbersPadLens[3], padding, p_numbers[3], numbersPadLens[4], numbersPadLens[4], padding, p_numbers[4], numbersPadLens[5], numbersPadLens[5], padding,  p_numbers[5], numbersPadLens[6], numbersPadLens[6], padding, p_numbers[6], p_queue, padLens[2], padLens[2], padding, p_app, padLens[3], padLens[3], padding, p_sla, padLens[4], padLens[4], padding, p_project, padLens[5], padLens[5], padding);
 	//sprintf(mail_buffer, "%s| %s%*.*s| %s%*.*s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s| %s%*.*s| %s%*.*s| %s%*.*s| %s%*.*s|<br>", mail_buffer, p_username, padLens[0], padLens[0], padding, p_jobname, padLens[1], padLens[1], padding, numbersPadLens[0], numbersPadLens[0], padding, p_numbers[0], numbersPadLens[1], numbersPadLens[1], padding, p_numbers[1], numbersPadLens[2], numbersPadLens[2], padding,  p_numbers[2], numbersPadLens[3], numbersPadLens[3], padding, p_numbers[3], numbersPadLens[4], numbersPadLens[4], padding, p_numbers[4], numbersPadLens[5], numbersPadLens[5], padding,  p_numbers[5], numbersPadLens[6], numbersPadLens[6], padding, p_numbers[6], p_queue, padLens[2], padLens[2], padding, p_app, padLens[3], padLens[3], padding, p_sla, padLens[4], padLens[4], padding, p_project, padLens[5], padLens[5], padding);
 
 	// sprintf(mail_buffer, "%s<tr><td>%s</td><td>%s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%ld</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr><br>", mail_buffer, p_username_length ? p_username : " ", p_jobname_length ? p_jobname : " ", p_min_maxrmem, p_min_rusage, p_min_ratio, p_max_maxrmem, p_max_rusage, p_max_ratio, p_num_jobs, p_queue_length ? p_queue : " ", p_app_length ? p_app : " ", p_sla_length ? p_sla : " ", p_project_length ? p_project : " ");
