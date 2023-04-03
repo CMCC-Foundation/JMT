@@ -93,13 +93,14 @@ enum
 	MAX_OUT_PARAMS
 } mem_out_p;
 
-static void sendmail(const char * from_mail, const char * mail_cmd, const char * message)
+static void sendmail(const char * from_mail, const char * to_mail, const char * mail_cmd, const char * message)
 {
 	FILE * pp;
 	static char buf[MAX_MAIL_BUF]; 
 
 	sprintf(buf, "Subject: JMT Report - Job Mem Thresh\n"
 		     "From: %s\n"
+		     "To: %s\n"
 		     "Mime-Version: 1.0\n"
 		     "Content-Type: multipart/related; boundary=\"boundary-example\"; type=\"text/html\"\n"
 		     "\n"
@@ -116,7 +117,7 @@ static void sendmail(const char * from_mail, const char * mail_cmd, const char *
                      "Best Regards,<br>Marco Chiarelli, Danilo Mazzarella.<br><br>"
 		     "</body>\n"
 		     "</html>\n"	
-		    "--boundary-example\n\n", from_mail, message);
+		    "--boundary-example\n\n", from_mail, to_mail, message);
 
 	if((pp = popen(mail_cmd, "w")) == NULL)
         {
@@ -524,7 +525,7 @@ int main(int argc, char *argv[])
 
     
     if(is_mail_active)
-        sendmail(from_mail, mail_cmd_to, mail_buffer);
+        sendmail(from_mail, to_mail, mail_cmd_to, mail_buffer);
     
 
     #undef is_mail_active
