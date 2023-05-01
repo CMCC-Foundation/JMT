@@ -446,7 +446,7 @@ int main(int argc, char *argv[])
     // printf("\nMEM Lower Bound: %d, MEM Upper Bound: %d\nDATE Lower Bound: %s, DATE Upper Bound: %s\n\n", p_lower_mem, p_upper_mem, p_lower_date, p_upper_date);
     sprintf(mail_buffer, "<b>MEM Lower Bound</b>: %d, <b>MEM Upper Bound</b>: %d;<br><b>DATE Lower Bound</b>: %s, <b>DATE Upper Bound</b>: %s<br>", p_lower_mem, p_upper_mem, p_lower_date, p_upper_date);
 
-    sprintf(mail_buffer, "%s<p style=\"background-color: black;\"><table style=\"background-color: black; color: #adff29;\"><br><tr style=\"color: red; font-weight: bold;\"><td>username</td><td>jobname</td><td>MIN(maxRMem)</td><td>MIN(rusage_mem)</td><td>MIN(mem_ratio) %%</td><td>MAX(maxRMem)</td><td>MAX(rusage_mem)</td><td>MAX(mem_ratio) %%</td><td>num_jobs</td><td>queue</td><td>app</td><td>sla</td><td>project</td></tr><br>", mail_buffer);
+    sprintf(mail_buffer, "%s<p style=\"background-color: black;\"><table style=\"background-color: black; color: #adff29;\"><br><tr style=\"color: red; font-weight: bold;\"><td>username</td><td>jobname</td><td>MIN(maxRMem) [MB]</td><td>MIN(rusage_mem) [MB]</td><td>MIN(mem_ratio %%)</td><td>MAX(maxRMem) [MB]</td><td>MAX(rusage_mem) [MB]</td><td>MAX(mem_ratio %%)</td><td>num_jobs</td><td>queue</td><td>app</td><td>sla</td><td>project</td></tr><br>", mail_buffer);
 
     for(rows=0; !(result = mysql_stmt_fetch(stmt)); ++rows)
     {
@@ -504,7 +504,8 @@ int main(int argc, char *argv[])
 
 	// sprintf(mail_buffer, "%s<tr><td>%s</td><td>%s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%ld</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", mail_buffer, p_username, p_jobname, p_min_maxrmem, p_min_rusage, p_min_ratio, p_max_maxrmem, p_max_rusage, p_max_ratio, p_num_jobs, p_queue, p_app, p_sla, p_project);
 
-    sprintf(mail_buffer, "%s<p style=\"background-color: black;\"><table style=\"background-color: black; color: #adff29;\"><br><tr style=\"color: red; font-weight: bold;\"><td>username</td><td>jobname</td><td>MIN(maxRMem) [MB]</td><td>MIN(rusage_mem) [MB]</td><td>MIN(mem_ratio %%)</td><td>MAX(maxRMem) [MB]</td><td>MAX(rusage_mem) [MB]</td><td>MAX(mem_ratio %%)</td><td>num_jobs</td><td>queue</td><td>app</td><td>sla</td><td>project</td></tr><br>", mail_buffer);
+    sprintf(mail_buffer, "%s<tr><td>%s</td><td>%.19s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%lld</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", mail_buffer, p_username, p_jobname, p_min_maxrmem, p_min_rusage, p_min_ratio, p_max_maxrmem, p_max_rusage, p_max_ratio, p_num_jobs, p_queue, p_app, p_sla, p_project);
+
 
     }
 
