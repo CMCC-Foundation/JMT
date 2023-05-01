@@ -72,8 +72,8 @@ enum
 #define _MAX_JOBNAME_LEN 20
 #define _MAX_SLA_LEN 20
 
-#define MAX_BUFLINE_LEN 2*(20+MAX_USERNAME_LEN+_MAX_JOBNAME_LEN+MAX_QUEUE_LEN+MAX_APP_LEN+_MAX_SLA_LEN+MAX_PROJECT_LEN)
-#define NUMBERS_FIXED_LEN 16
+#define MAX_BUFLINE_LEN 3*(20+MAX_USERNAME_LEN+_MAX_JOBNAME_LEN+MAX_QUEUE_LEN+MAX_APP_LEN+_MAX_SLA_LEN+MAX_PROJECT_LEN) // 2*...
+#define NUMBERS_FIXED_LEN 21 // 16
 
 enum
 {
@@ -429,7 +429,9 @@ int main(int argc, char *argv[])
 
     // printf("username    jobname    MIN(maxRMem)    MIN(rusage_mem)    MIN(mem_ratio)    MAX(maxRMem)    MAX(rusage_mem)    MAX(mem_ratio)    num_jobs    queue    app    sla    project    \n\n");
     
-    sprintf(buffer, "| username%*.*s| jobname%*.*s| MIN(maxRMem)%*.*s| MIN(rusage_mem)|MIN(mem_ratio) %%| MAX(maxRMem)%*.*s| MAX(rusage_mem)|MAX(mem_ratio) %%| num_jobs%*.*s| queue%*.*s| app%*.*s| sla%*.*s| project%*.*s|\n", 7, 7, padding, 12, 12, padding, 3, 3, padding, 3, 3, padding, 7, 7, padding, 10, 10, padding, 16, 16, padding, 16, 16, padding, 8, 8, padding);
+    // sprintf(buffer, "| username%*.*s| jobname%*.*s| MIN(maxRMem)%*.*s| MIN(rusage_mem)|MIN(mem_ratio) %%| MAX(maxRMem)%*.*s| MAX(rusage_mem)|MAX(mem_ratio) %%| num_jobs%*.*s| queue%*.*s| app%*.*s| sla%*.*s| project%*.*s|\n", 7, 7, padding, 12, 12, padding, 3, 3, padding, 3, 3, padding, 7, 7, padding, 10, 10, padding, 16, 16, padding, 16, 16, padding, 8, 8, padding);
+
+    sprintf(buffer, "| username%*.*s| jobname%*.*s| MIN(maxRMem) [MB]%*.*s| MIN(rusage_mem) [MB]| MIN(mem_ratio %%)%*.*s| MAX(maxRMem) [MB]%*.*s| MAX(rusage_mem) [MB]| MAX(mem_ratio %%)%*.*s| num_jobs%*.*s| queue%*.*s| app%*.*s| sla%*.*s| project%*.*s|\n", 7, 7, padding, 12, 12, padding, 3, 3, padding, 4, 4, padding, 3, 3, padding, 4, 4, padding, 12, 12, padding, 10, 10, padding, 16, 16, padding, 16, 16, padding, 8, 8, padding);
 
 
     sprintf(border_buffer, "+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+\n", MAX_USERNAME_LEN, MAX_USERNAME_LEN, border_padding, _MAX_JOBNAME_LEN, _MAX_JOBNAME_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, MAX_QUEUE_LEN, MAX_QUEUE_LEN, border_padding, MAX_APP_LEN, MAX_APP_LEN, border_padding, _MAX_SLA_LEN, _MAX_SLA_LEN, border_padding, MAX_PROJECT_LEN, MAX_PROJECT_LEN, border_padding);
@@ -500,7 +502,9 @@ int main(int argc, char *argv[])
 
 	// sprintf(mail_buffer, "%s<tr><td>%s</td><td>%s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%ld</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr><br>", mail_buffer, p_username_length ? p_username : " ", p_jobname_length ? p_jobname : " ", p_min_maxrmem, p_min_rusage, p_min_ratio, p_max_maxrmem, p_max_rusage, p_max_ratio, p_num_jobs, p_queue_length ? p_queue : " ", p_app_length ? p_app : " ", p_sla_length ? p_sla : " ", p_project_length ? p_project : " ");
 
-	sprintf(mail_buffer, "%s<tr><td>%s</td><td>%s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%ld</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", mail_buffer, p_username, p_jobname, p_min_maxrmem, p_min_rusage, p_min_ratio, p_max_maxrmem, p_max_rusage, p_max_ratio, p_num_jobs, p_queue, p_app, p_sla, p_project);
+	// sprintf(mail_buffer, "%s<tr><td>%s</td><td>%s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%ld</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", mail_buffer, p_username, p_jobname, p_min_maxrmem, p_min_rusage, p_min_ratio, p_max_maxrmem, p_max_rusage, p_max_ratio, p_num_jobs, p_queue, p_app, p_sla, p_project);
+
+    sprintf(mail_buffer, "%s<p style=\"background-color: black;\"><table style=\"background-color: black; color: #adff29;\"><br><tr style=\"color: red; font-weight: bold;\"><td>username</td><td>jobname</td><td>MIN(maxRMem) [MB]</td><td>MIN(rusage_mem) [MB]</td><td>MIN(mem_ratio %%)</td><td>MAX(maxRMem) [MB]</td><td>MAX(rusage_mem) [MB]</td><td>MAX(mem_ratio %%)</td><td>num_jobs</td><td>queue</td><td>app</td><td>sla</td><td>project</td></tr><br>", mail_buffer);
 
     }
 
