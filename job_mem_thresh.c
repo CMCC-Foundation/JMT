@@ -504,7 +504,7 @@ int main(int argc, char *argv[])
 
 	// sprintf(mail_buffer, "%s<tr><td>%s</td><td>%s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%ld</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", mail_buffer, p_username, p_jobname, p_min_maxrmem, p_min_rusage, p_min_ratio, p_max_maxrmem, p_max_rusage, p_max_ratio, p_num_jobs, p_queue, p_app, p_sla, p_project);
 
-    sprintf(mail_buffer, "%s<tr><td>%s</td><td>%.19s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%lld</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", mail_buffer, p_username, p_jobname, p_min_maxrmem, p_min_rusage, p_min_ratio, p_max_maxrmem, p_max_rusage, p_max_ratio, p_num_jobs, p_queue, p_app, p_sla, p_project);
+    	sprintf(mail_buffer, "%s<tr><td>%s</td><td>%.19s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%lld</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", mail_buffer, p_username, p_jobname, p_min_maxrmem, p_min_rusage, p_min_ratio, p_max_maxrmem, p_max_rusage, p_max_ratio, p_num_jobs, p_queue, p_app, p_sla, p_project);
 
 
     }
