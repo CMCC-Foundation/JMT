@@ -252,7 +252,11 @@ int main(int argc, char *argv[])
     
 
     /* preparing output buffer */
-    status = mysql_stmt_bind_param(stmt, ps_params);
+    if((status = mysql_stmt_bind_param(stmt, ps_params)))
+    {
+        fprintf(stderr, "mysql_stmt_bind_param failed\n");
+        exit(1);
+    }
 
     #ifdef DEBUG_MODE
     printf("mem_lower_limit: %d\nmem_upper_limit: %d\n", mem_lower_limit, mem_upper_limit);
@@ -396,8 +400,7 @@ int main(int argc, char *argv[])
     }
     */
 
-    status = mysql_stmt_bind_result(stmt, out_params);
-    if (status)
+    if ((status = mysql_stmt_bind_result(stmt, out_params)))
     {
         fprintf(stderr, "bind result failed: %d\n", status);
         exit(1);
