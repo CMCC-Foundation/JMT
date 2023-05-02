@@ -161,9 +161,6 @@ int main(int argc, char *argv[])
 
     // char mail_cmd_to[MAX_MAILCMDTO_LEN];
 
-    if(to_mail)
-        sprintf(mail_cmd_to, "%s \"%s\"", mail_cmd, to_mail);
-
     conn = mysql_init(NULL);
 
     //apro la connessione al DB
