@@ -444,9 +444,9 @@ int main(int argc, char *argv[])
     //sprintf(mail_buffer, "%s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+<br>", mail_buffer, MAX_USERNAME_LEN, MAX_USERNAME_LEN, border_padding, _MAX_JOBNAME_LEN, _MAX_JOBNAME_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, MAX_QUEUE_LEN, MAX_QUEUE_LEN, border_padding, MAX_APP_LEN, MAX_APP_LEN, border_padding, _MAX_SLA_LEN, _MAX_SLA_LEN, border_padding, MAX_PROJECT_LEN, MAX_PROJECT_LEN, border_padding);
 
     // printf("\nMEM Lower Bound: %d, MEM Upper Bound: %d\nDATE Lower Bound: %s, DATE Upper Bound: %s\n\n", p_lower_mem, p_upper_mem, p_lower_date, p_upper_date);
-    sprintf(mail_buffer, "<b>MEM Lower Bound</b>: %d, <b>MEM Upper Bound</b>: %d;<br><b>DATE Lower Bound</b>: %s, <b>DATE Upper Bound</b>: %s<br>", p_lower_mem, p_upper_mem, p_lower_date, p_upper_date);
+    sprintf(mail_buffer, "<b>MEM Lower Bound</b>: %d, <b>MEM Upper Bound</b>: %d;<br><b>DATE Lower Bound</b>: %s, <b>DATE Upper Bound</b>: %s<br><br>\n", p_lower_mem, p_upper_mem, p_lower_date, p_upper_date);
 
-    sprintf(mail_buffer, "%s<table style=\"background-color: black; color: #adff29;\"><tr style=\"color: red; font-weight: bold;\"><th>username</th><th>jobname</th><th>MIN(maxRMem) [MB]</th><th>MIN(rusage_mem) [MB]</th><th>MIN(mem_ratio %%)</th><th>MAX(maxRMem) [MB]</th><th>MAX(rusage_mem) [MB]</th><th>MAX(mem_ratio %%)</th><th>num_jobs</th><th>queue</th><th>app</th><th>sla</th><th>project</th></tr>", mail_buffer);
+    sprintf(mail_buffer, "%s<table style=\"background-color: black; color: #adff29;\"><tr style=\"color: red; font-weight: bold;\"><th>username</th><th>jobname</th><th>MIN(maxRMem) [MB]</th><th>MIN(rusage_mem) [MB]</th><th>MIN(mem_ratio %%)</th><th>MAX(maxRMem) [MB]</th><th>MAX(rusage_mem) [MB]</th><th>MAX(mem_ratio %%)</th><th>num_jobs</th><th>queue</th><th>app</th><th>sla</th><th>project</th></tr>\n", mail_buffer);
 
     for(rows=0; !(result = mysql_stmt_fetch(stmt)); ++rows)
     {
@@ -504,7 +504,7 @@ int main(int argc, char *argv[])
 
 	// sprintf(mail_buffer, "%s<tr><td>%s</td><td>%s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%ld</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", mail_buffer, p_username, p_jobname, p_min_maxrmem, p_min_rusage, p_min_ratio, p_max_maxrmem, p_max_rusage, p_max_ratio, p_num_jobs, p_queue, p_app, p_sla, p_project);
 
-    	sprintf(mail_buffer, "%s<tr><td>%s</td><td>%.19s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%lld</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", mail_buffer, p_username, p_jobname, p_min_maxrmem, p_min_rusage, p_min_ratio, p_max_maxrmem, p_max_rusage, p_max_ratio, p_num_jobs, p_queue, p_app, p_sla, p_project);
+    	sprintf(mail_buffer, "%s<tr><td>%s</td><td>%.19s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%lld</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n", mail_buffer, p_username, p_jobname, p_min_maxrmem, p_min_rusage, p_min_ratio, p_max_maxrmem, p_max_rusage, p_max_ratio, p_num_jobs, p_queue, p_app, p_sla, p_project);
 
 
     }
@@ -520,7 +520,7 @@ int main(int argc, char *argv[])
     #endif
 
     printf("%d results returned\n", rows);
-    sprintf(mail_buffer, "%s</table><p>%d results returned</p><br><br><br>", mail_buffer, rows);
+    sprintf(mail_buffer, "%s</table>\n<p>%d results returned</p><br><br><br>", mail_buffer, rows);
    
     #ifdef DEBUG_MODE
     printf("mail_buffer length: %d\n", strlen(mail_buffer));
