@@ -520,7 +520,7 @@ int main(int argc, char *argv[])
     #endif
 
     printf("%d results returned\n", rows);
-    sprintf(mail_buffer, "%s</table>\n<p>%d results returned</p><br><br><br>", mail_buffer, rows);
+    sprintf(mail_buffer, "%s</table>\n<p>%d results returned.</p><br><br><br>", mail_buffer, rows);
    
     #ifdef DEBUG_MODE
     printf("mail_buffer length: %d\n", strlen(mail_buffer));
