@@ -1,0 +1,14 @@
+DELIMITER ;; 
+DROP PROCEDURE IF EXISTS job_mem_thresh;
+CREATE PROCEDURE job_mem_thresh
+( 
+     IN lower_limit SMALLINT,  
+     IN upper_limit SMALLINT,
+     IN date_lower DATE,
+     IN date_upper DATE
+)  
+   BEGIN  
+   WITH tmp AS (select startTime, username, queue, app, serviceclass, project, jobName, maxRMem, rusage_mem, IF(rusage_mem > 0,cast(((maxRMem/1024)*100/rusage_mem) as decimal(10,2)),0) AS mem_ratio FROM acct_table WHERE startTime >= date_lower AND startTime <= date_upper) SELECT username, queue, app, serviceclass, project, jobName, MIN(maxRMem/1024), MAX(maxRMem/1024), AVG(maxRMem/1024), MIN(rusage_mem), MAX(rusage_mem), AVG(rusage_mem), MIN(mem_ratio), MAX(mem_ratio), AVG(mem_ratio), COUNT(*) as num_jobs FROM tmp WHERE mem_ratio > 0 AND (mem_ratio < lower_limit OR mem_ratio > upper_limit) group by queue, app, serviceclass, project, username;
+   END
+   ;;
+
