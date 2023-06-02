@@ -29,7 +29,8 @@
 #define _STRINGIFY(s) #s
 
 #define PADDING "                                                     " // "#####################################################"
-#define BORDER  "-----------------------------------------------------" 
+// #define BORDER  "-----------------------------------------------------" 
+#define BORDER "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
 
 // #define DEBUG_MODE
 #define JOB_MEM_THRESH "CALL job_mem_thresh(?,?,?,?)"
@@ -454,7 +455,7 @@ int main(int argc, char *argv[])
     
     // sprintf(buffer, "| username%*.*s| jobname%*.*s| MIN(maxRMem)%*.*s| MIN(rusage_mem)|MIN(mem_ratio) %%| MAX(maxRMem)%*.*s| MAX(rusage_mem)|MAX(mem_ratio) %%| num_jobs%*.*s| queue%*.*s| app%*.*s| sla%*.*s| project%*.*s|\n", 7, 7, padding, 12, 12, padding, 3, 3, padding, 3, 3, padding, 7, 7, padding, 10, 10, padding, 16, 16, padding, 16, 16, padding, 8, 8, padding);
 
-    sprintf(buffer, "| username%*.*s| queue%*.*s| app%*.*s| sla%*.*s| project%*.*s| jobname%*.*s| MIN(maxRMem) [MB]%*.*s| MAX(maxRMem) [MB]%*.*s| AVG(maxRMem) [MB]%*.*s| MIN(rusage_mem) [MB]| MAX(rusage_mem) [MB]| AVG(rusage_mem) [MB]| MIN(mem_ratio %%)%*.*s| MAX(mem_ratio %%)%*.*s| AVG(mem_ratio %%)%*.*s| num_jobs%*.*s", 7, 7, padding, 10, 10, padding, 16, 16, padding, 16, 16, padding, 8, 8, padding, 12, 12, padding, 3, 3, padding, 3, 3, padding, 3, 3, padding, 4, 4, padding, 4, 4, padding, 4, 4, padding, 12, 12, padding);
+    sprintf(buffer, "| username%*.*s| queue%*.*s| app%*.*s| sla%*.*s| project%*.*s| jobname%*.*s| MIN(maxRMem) [MB]%*.*s| MAX(maxRMem) [MB]%*.*s| AVG(maxRMem) [MB]%*.*s| MIN(rusage_mem) [MB]| MAX(rusage_mem) [MB]| AVG(rusage_mem) [MB]| MIN(mem_ratio %%)%*.*s| MAX(mem_ratio %%)%*.*s| AVG(mem_ratio %%)%*.*s| num_jobs%*.*s|\n", 7, 7, padding, 10, 10, padding, 16, 16, padding, 16, 16, padding, 8, 8, padding, 248, 248, padding, 3, 3, padding, 3, 3, padding, 3, 3, padding, 4, 4, padding, 4, 4, padding, 4, 4, padding, 12, 12, padding);
 
     // sprintf(buffer, "| username%*.*s| jobname%*.*s| MIN(maxRMem) [MB]%*.*s| MIN(rusage_mem) [MB]| MIN(mem_ratio %%)%*.*s| MAX(maxRMem) [MB]%*.*s| MAX(rusage_mem) [MB]| MAX(mem_ratio %%)%*.*s| num_jobs%*.*s| queue%*.*s| app%*.*s| sla%*.*s| project%*.*s|\n", 7, 7, padding, 12, 12, padding, 3, 3, padding, 4, 4, padding, 3, 3, padding, 4, 4, padding, 12, 12, padding, 10, 10, padding, 16, 16, padding, 16, 16, padding, 8, 8, padding);
 
@@ -543,7 +544,8 @@ int main(int argc, char *argv[])
 
 	// sprintf(mail_buffer, "%s<tr><td>%s</td><td>%s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%ld</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", mail_buffer, p_username, p_jobname, p_min_maxrmem, p_min_rusage, p_min_ratio, p_max_maxrmem, p_max_rusage, p_max_ratio, p_num_jobs, p_queue, p_app, p_sla, p_project);
 
-    	sprintf(mail_buffer, "%s<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%.19s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%lld</td></tr>\n", mail_buffer, p_username, p_queue, p_app, p_sla, p_project, p_jobname, p_min_maxrmem, p_max_maxrmem, p_avg_maxrmem, p_min_rusage, p_max_rusage, p_avg_rusage, p_min_ratio, p_max_ratio, p_avg_ratio, p_num_jobs);
+	// as previosly said, restore .19s to jobname placeholder if you want smarter jobname, but obviously less precise.
+    	sprintf(mail_buffer, "%s<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%lld</td></tr>\n", mail_buffer, p_username, p_queue, p_app, p_sla, p_project, p_jobname, p_min_maxrmem, p_max_maxrmem, p_avg_maxrmem, p_min_rusage, p_max_rusage, p_avg_rusage, p_min_ratio, p_max_ratio, p_avg_ratio, p_num_jobs);
 
     }
 
