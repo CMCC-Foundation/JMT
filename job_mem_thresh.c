@@ -69,7 +69,7 @@ enum
 #define MAX_SLA_LEN 50
 #define MAX_PROJECT_LEN 16
 
-#define _MAX_JOBNAME_LEN 20
+#define _MAX_JOBNAME_LEN MAX_JOBNAME_LEN // 20
 #define _MAX_SLA_LEN 20
 
 #define MAX_BUFLINE_LEN 3*(30+MAX_USERNAME_LEN+MAX_QUEUE_LEN+MAX_APP_LEN+_MAX_SLA_LEN+MAX_PROJECT_LEN+_MAX_JOBNAME_LEN) // 2*...
@@ -534,7 +534,8 @@ int main(int argc, char *argv[])
 
 	// printf("username length: %d, jobname_length: %d, queue_length: %d, app_length: %d, sla_length: %d, project_length: %d\n", p_username_length, p_jobname_length, p_queue_length, p_app_length, p_sla_length, p_project_length);
 
-        printf("| %s%*.*s| %s%*.*s| %s%*.*s| %.19s%*.*s| %s%*.*s| %.19s%*.*s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|\n", p_username, padLens[0], padLens[0], padding, p_queue, padLens[1], padLens[1], padding, p_app, padLens[2], padLens[2], padding, p_sla, padLens[3], padLens[3], padding, p_project, padLens[4], padLens[4], padding, p_jobname, padLens[5], padLens[5], padding, numbersPadLens[0], numbersPadLens[0], padding, p_numbers[0], numbersPadLens[1], numbersPadLens[1], padding, p_numbers[1], numbersPadLens[2], numbersPadLens[2], padding, p_numbers[2], numbersPadLens[3], numbersPadLens[3], padding, p_numbers[3], numbersPadLens[4], numbersPadLens[4], padding, p_numbers[4], numbersPadLens[5], numbersPadLens[5], padding, p_numbers[5], numbersPadLens[6], numbersPadLens[6], padding, p_numbers[6], numbersPadLens[7], numbersPadLens[7], padding, p_numbers[7], numbersPadLens[8], numbersPadLens[8], padding, p_numbers[8], numbersPadLens[9], numbersPadLens[9], padding, p_numbers[9]);
+        // restore .19s to jobname placeholder if you want smarter jobname, but obviously less precise.
+        printf("| %s%*.*s| %s%*.*s| %s%*.*s| %s%*.*s| %s%*.*s| %.19s%*.*s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|\n", p_username, padLens[0], padLens[0], padding, p_queue, padLens[1], padLens[1], padding, p_app, padLens[2], padLens[2], padding, p_sla, padLens[3], padLens[3], padding, p_project, padLens[4], padLens[4], padding, p_jobname, padLens[5], padLens[5], padding, numbersPadLens[0], numbersPadLens[0], padding, p_numbers[0], numbersPadLens[1], numbersPadLens[1], padding, p_numbers[1], numbersPadLens[2], numbersPadLens[2], padding, p_numbers[2], numbersPadLens[3], numbersPadLens[3], padding, p_numbers[3], numbersPadLens[4], numbersPadLens[4], padding, p_numbers[4], numbersPadLens[5], numbersPadLens[5], padding, p_numbers[5], numbersPadLens[6], numbersPadLens[6], padding, p_numbers[6], numbersPadLens[7], numbersPadLens[7], padding, p_numbers[7], numbersPadLens[8], numbersPadLens[8], padding, p_numbers[8], numbersPadLens[9], numbersPadLens[9], padding, p_numbers[9]);
         
 	//sprintf(mail_buffer, "%s| %s%*.*s| %s%*.*s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s| %s%*.*s| %s%*.*s| %s%*.*s| %s%*.*s|<br>", mail_buffer, p_username, padLens[0], padLens[0], padding, p_jobname, padLens[1], padLens[1], padding, numbersPadLens[0], numbersPadLens[0], padding, p_numbers[0], numbersPadLens[1], numbersPadLens[1], padding, p_numbers[1], numbersPadLens[2], numbersPadLens[2], padding,  p_numbers[2], numbersPadLens[3], numbersPadLens[3], padding, p_numbers[3], numbersPadLens[4], numbersPadLens[4], padding, p_numbers[4], numbersPadLens[5], numbersPadLens[5], padding,  p_numbers[5], numbersPadLens[6], numbersPadLens[6], padding, p_numbers[6], p_queue, padLens[2], padLens[2], padding, p_app, padLens[3], padLens[3], padding, p_sla, padLens[4], padLens[4], padding, p_project, padLens[5], padLens[5], padding);
 
