@@ -33,13 +33,14 @@
 #define BORDER "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
 
 // #define DEBUG_MODE
-#define JOB_MEM_THRESH "CALL job_mem_thresh(?,?,?,?)"
+#define JOB_MEM_THRESH "CALL job_mem_thresh(?,?,?,?,?)"
 
 #define MEM_LOWER_LIMIT 70
 #define MEM_UPPER_LIMIT 150
 
 #define DEFAULT_LOWER_DATE "2022-12-19"
 #define DEFAULT_UPPER_DATE "2023-03-27"
+#define DEFAULT_MIN_DISCRIMINANT_LCSS_JOBNAME_LENGTH 3
 
 #define ACCT_SERVER "127.0.0.1"
 #define ACCT_USER "root"
@@ -51,6 +52,7 @@ enum
 {
 	P_LOWER_MEM,
 	P_UPPER_MEM,
+	P_MIN_DISCRIMINANT_LCSS_JOBNAME_LENGTH,
 	P_LOWER_DATE,
 	P_UPPER_DATE,
 	MAX_IN_PARAMS
@@ -140,15 +142,16 @@ int main(int argc, char *argv[])
 {
     const short int mem_lower_limit = argc > 1 ? atoi(argv[1]) : MEM_LOWER_LIMIT; 
     const short int mem_upper_limit = argc > 2 ? atoi(argv[2]) : MEM_UPPER_LIMIT;
-    const char * p_lower_date = argc > 3 ? argv[3] : DEFAULT_LOWER_DATE;
-    const char * p_upper_date = argc > 4 ? argv[4] : DEFAULT_UPPER_DATE;
-    const char * server = argc > 5 ? argv[5] : ACCT_SERVER;
-    const char * user = argc > 6 ? argv[6] : ACCT_USER;
-    const char * password = argc > 7 ? argv[7] : ACCT_PASSWORD;
-    const char * database = argc > 8 ? argv[8] : ACCT_DATABASE;
-    const char * mail_cmd = argc > 9 ? argv[9] : DEFAULT_MAIL_COMMAND;
-    const char * from_mail = argc > 10 ? argv[10] : DEFAULT_FROM_MAIL;
-    const char * to_mail = argc > 11 ? argv[11] : NULL;
+    const short int min_discriminant_lcss_jobname_length = argc > 3 ? atoi(argv[3]) : DEFAULT_MIN_DISCRIMINANT_LCSS_JOBNAME_LENGTH;
+    const char * p_lower_date = argc > 4 ? argv[4] : DEFAULT_LOWER_DATE;
+    const char * p_upper_date = argc > 5 ? argv[5] : DEFAULT_UPPER_DATE;
+    const char * server = argc > 6 ? argv[6] : ACCT_SERVER;
+    const char * user = argc > 7 ? argv[7] : ACCT_USER;
+    const char * password = argc > 8 ? argv[8] : ACCT_PASSWORD;
+    const char * database = argc > 9 ? argv[9] : ACCT_DATABASE;
+    const char * mail_cmd = argc > 10 ? argv[10] : DEFAULT_MAIL_COMMAND;
+    const char * from_mail = argc > 11 ? argv[11] : DEFAULT_FROM_MAIL;
+    const char * to_mail = argc > 12 ? argv[12] : NULL;
 
     char mail_cmd_to[MAX_MAILCMDTO_LEN];
         
@@ -235,6 +238,12 @@ int main(int argc, char *argv[])
     ps_params[P_UPPER_MEM].length = &ul_zero_value;
     ps_params[P_UPPER_MEM].is_null = 0;
 
+    // min_discriminant_jobname_lcss_length
+    short p_min_discriminant_lcss_jobname_length = 0;
+    ps_params[P_MIN_DISCRIMINANT_LCSS_JOBNAME_LENGTH].buffer_type = MYSQL_TYPE_SHORT;
+    ps_params[P_MIN_DISCRIMINANT_LCSS_JOBNAME_LENGTH].buffer = (short *) &p_min_discriminant_lcss_jobname_length;
+    ps_params[P_MIN_DISCRIMINANT_LCSS_JOBNAME_LENGTH].length = &ul_zero_value;
+    ps_params[P_MIN_DISCRIMINANT_LCSS_JOBNAME_LENGTH].is_null = 0;
    
     // my_bool is_null_starttime;
   
@@ -268,6 +277,7 @@ int main(int argc, char *argv[])
 
     p_lower_mem = mem_lower_limit;
     p_upper_mem = mem_upper_limit;
+    p_min_discriminant_lcss_jobname_length = min_discriminant_lcss_jobname_length;
 
     if ((status = mysql_stmt_execute(stmt)))
     {
@@ -463,7 +473,7 @@ int main(int argc, char *argv[])
 
 
     // sprintf(border_buffer, "+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+\n", MAX_USERNAME_LEN, MAX_USERNAME_LEN, border_padding, _MAX_JOBNAME_LEN, _MAX_JOBNAME_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, MAX_QUEUE_LEN, MAX_QUEUE_LEN, border_padding, MAX_APP_LEN, MAX_APP_LEN, border_padding, _MAX_SLA_LEN, _MAX_SLA_LEN, border_padding, MAX_PROJECT_LEN, MAX_PROJECT_LEN, border_padding);
-    printf("\nMEM Lower Bound: %d%%, MEM Upper Bound: %d%%\nDATE Lower Bound: %s, DATE Upper Bound: %s\n\n", p_lower_mem, p_upper_mem, p_lower_date, p_upper_date);
+    printf("\nMEM Lower Bound: %d%%, MEM Upper Bound: %d%%;\nMIN Discriminant LCSS Jobname Length: %s;\nDATE Lower Bound: %s, DATE Upper Bound: %s.\n\n", p_lower_mem, p_upper_mem, p_min_discriminant_lcss_jobname_length, p_lower_date, p_upper_date);
     printf(border_buffer);
     printf(buffer);
     printf(border_buffer);
@@ -472,7 +482,7 @@ int main(int argc, char *argv[])
     //sprintf(mail_buffer, "%s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+<br>", mail_buffer, MAX_USERNAME_LEN, MAX_USERNAME_LEN, border_padding, _MAX_JOBNAME_LEN, _MAX_JOBNAME_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, MAX_QUEUE_LEN, MAX_QUEUE_LEN, border_padding, MAX_APP_LEN, MAX_APP_LEN, border_padding, _MAX_SLA_LEN, _MAX_SLA_LEN, border_padding, MAX_PROJECT_LEN, MAX_PROJECT_LEN, border_padding);
 
     // printf("\nMEM Lower Bound: %d, MEM Upper Bound: %d\nDATE Lower Bound: %s, DATE Upper Bound: %s\n\n", p_lower_mem, p_upper_mem, p_lower_date, p_upper_date);
-    sprintf(mail_buffer, "<b>MEM Lower Bound</b>: %d%%, <b>MEM Upper Bound</b>: %d%%;<br><b>DATE Lower Bound</b>: %s, <b>DATE Upper Bound</b>: %s<br><br>\n", p_lower_mem, p_upper_mem, p_lower_date, p_upper_date);
+    sprintf(mail_buffer, "<b>MEM Lower Bound</b>: %d%%, <b>MEM Upper Bound</b>: %d%%;<br><b>MIN Discriminant LCSS Jobname Length</b>: %d;<br><b>DATE Lower Bound</b>: %s, <b>DATE Upper Bound</b>: %s.<br><br>\n", p_lower_mem, p_upper_mem, p_min_discriminant_lcss_jobname_length, p_lower_date, p_upper_date);
 
     sprintf(mail_buffer, "%s<table style=\"background-color: black; color: #adff29;\"><tr style=\"color: red; font-weight: bold;\"><th>username</th><th>queue</th><th>app</th><th>sla</th><th>project</th><th>jobname</th><th>MIN(maxRMem) [MB]</th><th>MAX(maxRMem) [MB]</th><th>AVG(maxRMem) [MB]</th><th>MIN(rusage_mem) [MB]</th><th>MAX(rusage_mem) [MB]</th><th>AVG(rusage_mem) [MB]</th><th>MIN(mem_ratio %%)</th><th>MAX(mem_ratio %%)</th><th>AVG(mem_ratio %%)</th><th>num_jobs</th></tr>\n", mail_buffer);
 
@@ -536,7 +546,7 @@ int main(int argc, char *argv[])
 	// printf("username length: %d, jobname_length: %d, queue_length: %d, app_length: %d, sla_length: %d, project_length: %d\n", p_username_length, p_jobname_length, p_queue_length, p_app_length, p_sla_length, p_project_length);
 
         // restore .19s to jobname placeholder if you want smarter jobname, but obviously less precise.
-        printf("| %s%*.*s| %s%*.*s| %s%*.*s| %s%*.*s| %s%*.*s| %.19s%*.*s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|\n", p_username, padLens[0], padLens[0], padding, p_queue, padLens[1], padLens[1], padding, p_app, padLens[2], padLens[2], padding, p_sla, padLens[3], padLens[3], padding, p_project, padLens[4], padLens[4], padding, p_jobname, padLens[5], padLens[5], padding, numbersPadLens[0], numbersPadLens[0], padding, p_numbers[0], numbersPadLens[1], numbersPadLens[1], padding, p_numbers[1], numbersPadLens[2], numbersPadLens[2], padding, p_numbers[2], numbersPadLens[3], numbersPadLens[3], padding, p_numbers[3], numbersPadLens[4], numbersPadLens[4], padding, p_numbers[4], numbersPadLens[5], numbersPadLens[5], padding, p_numbers[5], numbersPadLens[6], numbersPadLens[6], padding, p_numbers[6], numbersPadLens[7], numbersPadLens[7], padding, p_numbers[7], numbersPadLens[8], numbersPadLens[8], padding, p_numbers[8], numbersPadLens[9], numbersPadLens[9], padding, p_numbers[9]);
+        printf("| %s%*.*s| %s%*.*s| %s%*.*s| %.19s%*.*s| %s%*.*s| %s%*.*s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|\n", p_username, padLens[0], padLens[0], padding, p_queue, padLens[1], padLens[1], padding, p_app, padLens[2], padLens[2], padding, p_sla, padLens[3], padLens[3], padding, p_project, padLens[4], padLens[4], padding, p_jobname, padLens[5], padLens[5], padding, numbersPadLens[0], numbersPadLens[0], padding, p_numbers[0], numbersPadLens[1], numbersPadLens[1], padding, p_numbers[1], numbersPadLens[2], numbersPadLens[2], padding, p_numbers[2], numbersPadLens[3], numbersPadLens[3], padding, p_numbers[3], numbersPadLens[4], numbersPadLens[4], padding, p_numbers[4], numbersPadLens[5], numbersPadLens[5], padding, p_numbers[5], numbersPadLens[6], numbersPadLens[6], padding, p_numbers[6], numbersPadLens[7], numbersPadLens[7], padding, p_numbers[7], numbersPadLens[8], numbersPadLens[8], padding, p_numbers[8], numbersPadLens[9], numbersPadLens[9], padding, p_numbers[9]);
         
 	//sprintf(mail_buffer, "%s| %s%*.*s| %s%*.*s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s| %s%*.*s| %s%*.*s| %s%*.*s| %s%*.*s|<br>", mail_buffer, p_username, padLens[0], padLens[0], padding, p_jobname, padLens[1], padLens[1], padding, numbersPadLens[0], numbersPadLens[0], padding, p_numbers[0], numbersPadLens[1], numbersPadLens[1], padding, p_numbers[1], numbersPadLens[2], numbersPadLens[2], padding,  p_numbers[2], numbersPadLens[3], numbersPadLens[3], padding, p_numbers[3], numbersPadLens[4], numbersPadLens[4], padding, p_numbers[4], numbersPadLens[5], numbersPadLens[5], padding,  p_numbers[5], numbersPadLens[6], numbersPadLens[6], padding, p_numbers[6], p_queue, padLens[2], padLens[2], padding, p_app, padLens[3], padLens[3], padding, p_sla, padLens[4], padLens[4], padding, p_project, padLens[5], padLens[5], padding);
 
