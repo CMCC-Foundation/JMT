@@ -473,7 +473,7 @@ int main(int argc, char *argv[])
 
 
     // sprintf(border_buffer, "+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+\n", MAX_USERNAME_LEN, MAX_USERNAME_LEN, border_padding, _MAX_JOBNAME_LEN, _MAX_JOBNAME_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, MAX_QUEUE_LEN, MAX_QUEUE_LEN, border_padding, MAX_APP_LEN, MAX_APP_LEN, border_padding, _MAX_SLA_LEN, _MAX_SLA_LEN, border_padding, MAX_PROJECT_LEN, MAX_PROJECT_LEN, border_padding);
-    printf("\nMEM Lower Bound: %d%%, MEM Upper Bound: %d%%;\nMIN Discriminant LCSS Jobname Length: %s;\nDATE Lower Bound: %s, DATE Upper Bound: %s.\n\n", p_lower_mem, p_upper_mem, p_min_discriminant_lcss_jobname_length, p_lower_date, p_upper_date);
+    printf("\nMEM Lower Bound: %d%%, MEM Upper Bound: %d%%;\nMIN Discriminant LCSS Jobname Length: %d;\nDATE Lower Bound: %s, DATE Upper Bound: %s.\n\n", p_lower_mem, p_upper_mem, p_min_discriminant_lcss_jobname_length, p_lower_date, p_upper_date);
     printf(border_buffer);
     printf(buffer);
     printf(border_buffer);
