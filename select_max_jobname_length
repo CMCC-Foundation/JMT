@@ -1,0 +1,15 @@
+DELIMITER ;; 
+DROP FUNCTION IF EXISTS select_max_jobname_length;
+CREATE FUNCTION select_max_jobname_length
+(  
+     date_lower DATE,
+     date_upper DATE
+)  
+RETURNS INTEGER DETERMINISTIC
+   BEGIN
+   	DECLARE result INT;
+   	WITH tmp AS (SELECT DISTINCT jobName FROM acct_juno WHERE startTime >= date_lower AND startTime <= date_upper AND exclExec = 0) SELECT MAX(LENGTH(jobName)) INTO result FROM tmp; 
+  	RETURN result;
+   END 
+   ;;
+

@@ -21,7 +21,7 @@
 MEM_LOWER_LIMIT=${1:-"70"}
 MEM_UPPER_LIMIT=${2:-"150"}
 MIN_DISCRIMINANT_LCSS_JOBNAME_LENGTH=${3:-"3"}
-LOWER_DATE=${4-$(date '+%Y-%m-%d' -d'-30 days')}
+LOWER_DATE=${4-$(date '+%Y-%m-%d' -d'-10 days')} #30 days')}
 UPPER_DATE=${5-$(date '+%Y-%m-%d')}
 ACCT_SERVER=${6:-"127.0.0.1"}
 ACCT_USER=${7:-"root"}
