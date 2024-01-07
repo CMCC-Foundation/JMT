@@ -243,9 +243,9 @@ int main(int argc, char *argv[])
     ps_params[P_UPPER_MEM].is_null = 0;
 
     // min_rusage_mem
-    short p_min_rusage_mem = 0;
-    ps_params[P_MIN_RUSAGE_MEM].buffer_type = MYSQL_TYPE_SHORT;
-    ps_params[P_MIN_RUSAGE_MEM].buffer = (short *) &p_min_rusage_mem;
+    int p_min_rusage_mem = 0;
+    ps_params[P_MIN_RUSAGE_MEM].buffer_type = MYSQL_TYPE_LONG;
+    ps_params[P_MIN_RUSAGE_MEM].buffer = (int *) &p_min_rusage_mem;
     ps_params[P_MIN_RUSAGE_MEM].length = &ul_zero_value;
     ps_params[P_MIN_RUSAGE_MEM].is_null = 0;
 
