@@ -64,8 +64,8 @@ enum
 #define DEFAULT_MAIL_COMMAND "sendmail"
 #define DEFAULT_FROM_MAIL "job_mem_tresh"
 #define MAX_MAILCMDTO_LEN 128
-#define MAX_LOGBUF_LEN 130000
-#define MAX_MAIL_BUF 160000
+#define MAX_LOGBUF_LEN 160000
+#define MAX_MAIL_BUF 190000
 #define MAX_TIME_LEN 100
 
 #define MAX_USERNAME_LEN 16
@@ -78,7 +78,7 @@ enum
 #define _MAX_JOBNAME_LEN MAX_JOBNAME_LEN // 20
 #define _MAX_SLA_LEN 20
 
-#define MAX_BUFLINE_LEN 3*(30+MAX_USERNAME_LEN+MAX_QUEUE_LEN+MAX_APP_LEN+_MAX_SLA_LEN+MAX_PROJECT_LEN+_MAX_JOBNAME_LEN) // 2*...
+#define MAX_BUFLINE_LEN 5*(30+MAX_USERNAME_LEN+MAX_QUEUE_LEN+MAX_APP_LEN+_MAX_SLA_LEN+MAX_PROJECT_LEN+_MAX_JOBNAME_LEN) // 2*...
 #define NUMBERS_FIXED_LEN 21 // 16
 
 enum
@@ -98,7 +98,9 @@ enum
 	P_MIN_RATIO,
 	P_MAX_RATIO,
 	P_AVG_RATIO,
-	P_NJOBS,
+	P_MIN_NJOBS,
+	P_MAX_NJOBS,
+	P_AVG_NJOBS,
 	MAX_OUT_PARAMS
 } mem_out_p;
 
@@ -187,10 +189,10 @@ int main(int argc, char *argv[])
     MYSQL_BIND out_params[MAX_OUT_PARAMS];
 
     int padLens[6];
-    int numbersPadLens[10];
+    int numbersPadLens[12];
     const char * padding = PADDING; //  "#####################################################";
     const char * border_padding = BORDER; 
-    char p_numbers[10][33];
+    char p_numbers[12][33];
     char buffer[MAX_BUFLINE_LEN];
     char border_buffer[MAX_BUFLINE_LEN];
     char mail_buffer[MAX_LOGBUF_LEN];
@@ -420,11 +422,25 @@ int main(int argc, char *argv[])
     out_params[P_AVG_RATIO].is_null = 0;
 
     // num_jobs
-    long long p_num_jobs = 0;
-    out_params[P_NJOBS].buffer_type = MYSQL_TYPE_LONGLONG;
-    out_params[P_NJOBS].buffer = (long long *) &p_num_jobs;
-    out_params[P_NJOBS].length = &ul_zero_value;
-    out_params[P_NJOBS].is_null = 0;
+    long long p_min_num_jobs = 0;
+    out_params[P_MIN_NJOBS].buffer_type = MYSQL_TYPE_LONGLONG;
+    out_params[P_MIN_NJOBS].buffer = (long long *) &p_min_num_jobs;
+    out_params[P_MIN_NJOBS].length = &ul_zero_value;
+    out_params[P_MIN_NJOBS].is_null = 0;
+
+    // num_jobs
+    long long p_max_num_jobs = 0;
+    out_params[P_MAX_NJOBS].buffer_type = MYSQL_TYPE_LONGLONG;
+    out_params[P_MAX_NJOBS].buffer = (long long *) &p_max_num_jobs;
+    out_params[P_MAX_NJOBS].length = &ul_zero_value;
+    out_params[P_MAX_NJOBS].is_null = 0;
+    
+    // num_jobs
+    float p_avg_num_jobs = 0;
+    out_params[P_AVG_NJOBS].buffer_type = MYSQL_TYPE_FLOAT;
+    out_params[P_AVG_NJOBS].buffer = (float *) &p_avg_num_jobs;
+    out_params[P_AVG_NJOBS].length = &ul_zero_value;
+    out_params[P_AVG_NJOBS].is_null = 0;
 
     #ifdef DEBUG_MODE
     printf("\n\n *** COMPLETED ALL OUT_PARAMS STUFFS *** \n\n"); 
@@ -477,11 +493,11 @@ int main(int argc, char *argv[])
     
     // sprintf(buffer, "| username%*.*s| jobname%*.*s| MIN(maxRMem)%*.*s| MIN(rusage_mem)|MIN(mem_ratio) %%| MAX(maxRMem)%*.*s| MAX(rusage_mem)|MAX(mem_ratio) %%| num_jobs%*.*s| queue%*.*s| app%*.*s| sla%*.*s| project%*.*s|\n", 7, 7, padding, 12, 12, padding, 3, 3, padding, 3, 3, padding, 7, 7, padding, 10, 10, padding, 16, 16, padding, 16, 16, padding, 8, 8, padding);
 
-    sprintf(buffer, "| username%*.*s| queue%*.*s| app%*.*s| sla%*.*s| project%*.*s| jobname%*.*s| MIN(maxRMem) [MB]%*.*s| MAX(maxRMem) [MB]%*.*s| AVG(maxRMem) [MB]%*.*s| MIN(rusage_mem) [MB]| MAX(rusage_mem) [MB]| AVG(rusage_mem) [MB]| MIN(mem_ratio %%)%*.*s| MAX(mem_ratio %%)%*.*s| AVG(mem_ratio %%)%*.*s| num_jobs%*.*s|\n", 7, 7, padding, 10, 10, padding, 16, 16, padding, 16, 16, padding, 8, 8, padding, 248, 248, padding, 3, 3, padding, 3, 3, padding, 3, 3, padding, 4, 4, padding, 4, 4, padding, 4, 4, padding, 12, 12, padding);
+    sprintf(buffer, "| username%*.*s| queue%*.*s| app%*.*s| sla%*.*s| project%*.*s| jobname%*.*s| MIN(maxRMem) [MB]%*.*s| MAX(maxRMem) [MB]%*.*s| AVG(maxRMem) [MB]%*.*s| MIN(rusage_mem) [MB]| MAX(rusage_mem) [MB]| AVG(rusage_mem) [MB]| MIN(mem_ratio %%)%*.*s| MAX(mem_ratio %%)%*.*s| AVG(mem_ratio %%)%*.*s| MIN(num_jobs)%*.*s| MAX(num_jobs)%*.*s| AVG(num_jobs)%*.*s|\n", 7, 7, padding, 10, 10, padding, 16, 16, padding, 16, 16, padding, 8, 8, padding, 248, 248, padding, 3, 3, padding, 3, 3, padding, 3, 3, padding, 4, 4, padding, 4, 4, padding, 4, 4, padding, 7, 7, padding, 7, 7, padding, 7, 7, padding);
 
     // sprintf(buffer, "| username%*.*s| jobname%*.*s| MIN(maxRMem) [MB]%*.*s| MIN(rusage_mem) [MB]| MIN(mem_ratio %%)%*.*s| MAX(maxRMem) [MB]%*.*s| MAX(rusage_mem) [MB]| MAX(mem_ratio %%)%*.*s| num_jobs%*.*s| queue%*.*s| app%*.*s| sla%*.*s| project%*.*s|\n", 7, 7, padding, 12, 12, padding, 3, 3, padding, 4, 4, padding, 3, 3, padding, 4, 4, padding, 12, 12, padding, 10, 10, padding, 16, 16, padding, 16, 16, padding, 8, 8, padding);
 
-    sprintf(border_buffer, "+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+\n", MAX_USERNAME_LEN, MAX_USERNAME_LEN, border_padding, MAX_QUEUE_LEN, MAX_QUEUE_LEN, border_padding, MAX_APP_LEN, MAX_APP_LEN, border_padding, _MAX_SLA_LEN, _MAX_SLA_LEN, border_padding, MAX_PROJECT_LEN, MAX_PROJECT_LEN, border_padding, _MAX_JOBNAME_LEN, _MAX_JOBNAME_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding);
+    sprintf(border_buffer, "+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+\n", MAX_USERNAME_LEN, MAX_USERNAME_LEN, border_padding, MAX_QUEUE_LEN, MAX_QUEUE_LEN, border_padding, MAX_APP_LEN, MAX_APP_LEN, border_padding, _MAX_SLA_LEN, _MAX_SLA_LEN, border_padding, MAX_PROJECT_LEN, MAX_PROJECT_LEN, border_padding, _MAX_JOBNAME_LEN, _MAX_JOBNAME_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding);
 
 
     // sprintf(border_buffer, "+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+%*.*s+\n", MAX_USERNAME_LEN, MAX_USERNAME_LEN, border_padding, _MAX_JOBNAME_LEN, _MAX_JOBNAME_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, NUMBERS_FIXED_LEN, NUMBERS_FIXED_LEN, border_padding, MAX_QUEUE_LEN, MAX_QUEUE_LEN, border_padding, MAX_APP_LEN, MAX_APP_LEN, border_padding, _MAX_SLA_LEN, _MAX_SLA_LEN, border_padding, MAX_PROJECT_LEN, MAX_PROJECT_LEN, border_padding);
@@ -496,7 +512,7 @@ int main(int argc, char *argv[])
     // printf("\nMEM Lower Bound: %d, MEM Upper Bound: %d\nDATE Lower Bound: %s, DATE Upper Bound: %s\n\n", p_lower_mem, p_upper_mem, p_lower_date, p_upper_date);
     sprintf(mail_buffer, "<b>MEM Lower Bound</b>: %d%%, <b>MEM Upper Bound</b>: %d%%;<br><b>MIN Discriminant LCSS Jobname Length</b>: %d;<br><b>DATE Lower Bound</b>: %s, <b>DATE Upper Bound</b>: %s.<br><br>\n", p_lower_mem, p_upper_mem, p_min_discriminant_lcss_jobname_length, p_lower_date, p_upper_date);
 
-    sprintf(mail_buffer, "%s<table style=\"background-color: black; color: #adff29;\"><tr style=\"color: red; font-weight: bold;\"><th>username</th><th>queue</th><th>app</th><th>sla</th><th>project</th><th>jobname</th><th>MIN(maxRMem) [MB]</th><th>MAX(maxRMem) [MB]</th><th>AVG(maxRMem) [MB]</th><th>MIN(rusage_mem) [MB]</th><th>MAX(rusage_mem) [MB]</th><th>AVG(rusage_mem) [MB]</th><th>MIN(mem_ratio %%)</th><th>MAX(mem_ratio %%)</th><th>AVG(mem_ratio %%)</th><th>num_jobs</th></tr>\n", mail_buffer);
+    sprintf(mail_buffer, "%s<table style=\"background-color: black; color: #adff29;\"><tr style=\"color: red; font-weight: bold;\"><th>username</th><th>queue</th><th>app</th><th>sla</th><th>project</th><th>jobname</th><th>MIN(maxRMem) [MB]</th><th>MAX(maxRMem) [MB]</th><th>AVG(maxRMem) [MB]</th><th>MIN(rusage_mem) [MB]</th><th>MAX(rusage_mem) [MB]</th><th>AVG(rusage_mem) [MB]</th><th>MIN(mem_ratio %%)</th><th>MAX(mem_ratio %%)</th><th>AVG(mem_ratio %%)</th><th>MIN(num_jobs)</th><th>MAX(num_jobs)</th><th>AVG(num_jobs)</th></tr>\n", mail_buffer);
 
     for(rows=0; !(result = mysql_stmt_fetch(stmt)); ++rows)
     {
@@ -551,14 +567,19 @@ int main(int argc, char *argv[])
 	sprintf(p_numbers[8], "%.2f ", p_avg_ratio);
 	numbersPadLens[8] = NUMBERS_FIXED_LEN - strlen(p_numbers[8]);
 	
-	sprintf(p_numbers[9], "%lld ", p_num_jobs);
+	sprintf(p_numbers[9], "%lld ", p_min_num_jobs);
 	numbersPadLens[9] = NUMBERS_FIXED_LEN - strlen(p_numbers[9]);
+	sprintf(p_numbers[10], "%lld ", p_max_num_jobs);
+        numbersPadLens[10] = NUMBERS_FIXED_LEN - strlen(p_numbers[10]);
+	sprintf(p_numbers[11], "%.2f ", p_avg_num_jobs);
+        numbersPadLens[11] = NUMBERS_FIXED_LEN - strlen(p_numbers[11]);
+
 	// printf("in result: %d\n", result);
 
 	// printf("username length: %d, jobname_length: %d, queue_length: %d, app_length: %d, sla_length: %d, project_length: %d\n", p_username_length, p_jobname_length, p_queue_length, p_app_length, p_sla_length, p_project_length);
 
         // restore .19s to jobname placeholder if you want smarter jobname, but obviously less precise.
-        printf("| %s%*.*s| %s%*.*s| %s%*.*s| %.19s%*.*s| %s%*.*s| %s%*.*s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|\n", p_username, padLens[0], padLens[0], padding, p_queue, padLens[1], padLens[1], padding, p_app, padLens[2], padLens[2], padding, p_sla, padLens[3], padLens[3], padding, p_project, padLens[4], padLens[4], padding, p_jobname, padLens[5], padLens[5], padding, numbersPadLens[0], numbersPadLens[0], padding, p_numbers[0], numbersPadLens[1], numbersPadLens[1], padding, p_numbers[1], numbersPadLens[2], numbersPadLens[2], padding, p_numbers[2], numbersPadLens[3], numbersPadLens[3], padding, p_numbers[3], numbersPadLens[4], numbersPadLens[4], padding, p_numbers[4], numbersPadLens[5], numbersPadLens[5], padding, p_numbers[5], numbersPadLens[6], numbersPadLens[6], padding, p_numbers[6], numbersPadLens[7], numbersPadLens[7], padding, p_numbers[7], numbersPadLens[8], numbersPadLens[8], padding, p_numbers[8], numbersPadLens[9], numbersPadLens[9], padding, p_numbers[9]);
+        printf("| %s%*.*s| %s%*.*s| %s%*.*s| %.19s%*.*s| %s%*.*s| %s%*.*s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|\n", p_username, padLens[0], padLens[0], padding, p_queue, padLens[1], padLens[1], padding, p_app, padLens[2], padLens[2], padding, p_sla, padLens[3], padLens[3], padding, p_project, padLens[4], padLens[4], padding, p_jobname, padLens[5], padLens[5], padding, numbersPadLens[0], numbersPadLens[0], padding, p_numbers[0], numbersPadLens[1], numbersPadLens[1], padding, p_numbers[1], numbersPadLens[2], numbersPadLens[2], padding, p_numbers[2], numbersPadLens[3], numbersPadLens[3], padding, p_numbers[3], numbersPadLens[4], numbersPadLens[4], padding, p_numbers[4], numbersPadLens[5], numbersPadLens[5], padding, p_numbers[5], numbersPadLens[6], numbersPadLens[6], padding, p_numbers[6], numbersPadLens[7], numbersPadLens[7], padding, p_numbers[7], numbersPadLens[8], numbersPadLens[8], padding, p_numbers[8], numbersPadLens[9], numbersPadLens[9], padding, p_numbers[9], numbersPadLens[10], numbersPadLens[10], padding, p_numbers[10], numbersPadLens[11], numbersPadLens[11], padding, p_numbers[11]);
         
 	//sprintf(mail_buffer, "%s| %s%*.*s| %s%*.*s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s|%*.*s%s| %s%*.*s| %s%*.*s| %s%*.*s| %s%*.*s|<br>", mail_buffer, p_username, padLens[0], padLens[0], padding, p_jobname, padLens[1], padLens[1], padding, numbersPadLens[0], numbersPadLens[0], padding, p_numbers[0], numbersPadLens[1], numbersPadLens[1], padding, p_numbers[1], numbersPadLens[2], numbersPadLens[2], padding,  p_numbers[2], numbersPadLens[3], numbersPadLens[3], padding, p_numbers[3], numbersPadLens[4], numbersPadLens[4], padding, p_numbers[4], numbersPadLens[5], numbersPadLens[5], padding,  p_numbers[5], numbersPadLens[6], numbersPadLens[6], padding, p_numbers[6], p_queue, padLens[2], padLens[2], padding, p_app, padLens[3], padLens[3], padding, p_sla, padLens[4], padLens[4], padding, p_project, padLens[5], padLens[5], padding);
 
@@ -567,7 +588,7 @@ int main(int argc, char *argv[])
 	// sprintf(mail_buffer, "%s<tr><td>%s</td><td>%s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%ld</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", mail_buffer, p_username, p_jobname, p_min_maxrmem, p_min_rusage, p_min_ratio, p_max_maxrmem, p_max_rusage, p_max_ratio, p_num_jobs, p_queue, p_app, p_sla, p_project);
 
 	// as previosly said, restore .19s to jobname placeholder if you want smarter jobname, but obviously less precise.
-    	sprintf(mail_buffer, "%s<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%lld</td></tr>\n", mail_buffer, p_username, p_queue, p_app, p_sla, p_project, p_jobname, p_min_maxrmem, p_max_maxrmem, p_avg_maxrmem, p_min_rusage, p_max_rusage, p_avg_rusage, p_min_ratio, p_max_ratio, p_avg_ratio, p_num_jobs);
+    	sprintf(mail_buffer, "%s<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%lld</td><td>%lld</td><td>%.2f</td></tr>\n", mail_buffer, p_username, p_queue, p_app, p_sla, p_project, p_jobname, p_min_maxrmem, p_max_maxrmem, p_avg_maxrmem, p_min_rusage, p_max_rusage, p_avg_rusage, p_min_ratio, p_max_ratio, p_avg_ratio, p_min_num_jobs, p_max_num_jobs, p_avg_num_jobs);
 
     }
 
